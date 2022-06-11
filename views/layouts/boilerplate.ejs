@@ -10,6 +10,8 @@
 <body class="d-flex flex-column vh-100">
     <%- include('../partials/nav') %> 
     <main class="container mt-5">
+        <%= success %> 
+        <!-- body takes whatever content is passed from an ejs file from views that have the layout function at the very top and inserted here-->
         <%- body %> 
     </main>
     <%- include('../partials/footer') %> 
