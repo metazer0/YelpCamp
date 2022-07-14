@@ -8,11 +8,12 @@ const ExpressError = require('./utils/ExpressError')
 const methodOverride = require('method-override')
 const session = require('express-session')
 const flash = require('connect-flash')
-const campgrounds = require('./routes/campgrounds')
-const reviews = require('./routes/reviews')
+const campgroundRoutes = require('./routes/campgrounds')
+const reviewRoutes = require('./routes/reviews')
 const passport = require('passport')
 const LocalStrategy = require('passport-local')
 const User = require('./models/user')
+const userRoutes = require('./routes/users')
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {useNewUrlParser:true, useUnifiedTopology:true})
 
@@ -51,8 +52,10 @@ passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
 app.use((req,res,next) =>{
+  console.log(req.session)
   res.locals.success = req.flash('success')
   res.locals.error = req.flash('error')
+  res.locals.currentUser = req.user
   next()
 })
 
@@ -68,9 +71,9 @@ app.get('/fakeuser', async (req,res) => {
     res.send(newUser)
 })
 
-
-app.use('/campgrounds', campgrounds)
-app.use('/campgrounds/:id/reviews', reviews)
+app.use('/', userRoutes)
+app.use('/campgrounds', campgroundRoutes)
+app.use('/campgrounds/:id/reviews', reviewRoutes)
 
 
 

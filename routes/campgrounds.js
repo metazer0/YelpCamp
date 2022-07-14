@@ -4,7 +4,7 @@ const catchAsync = require('../utils/catchAsync')
 const ExpressError = require('../utils/ExpressError')
 const Campground = require('../models/campground')
 const {campgroundSchema} = require('../schemas.js')
-
+const {isLoggedIn} = require('../middleware')
 
 
 const validateCampground = (req,res,next) =>{
@@ -23,16 +23,17 @@ router.get('/', async (req,res) => {
     res.render('campgrounds/index',{campgrounds})
 })
 
-router.get('/new', (req,res) =>{
+router.get('/new', isLoggedIn, (req,res) =>{
     res.render('campgrounds/new')
 })
 
-router.post('/', validateCampground, catchAsync(async (req,res,next) => {
+router.post('/', isLoggedIn, validateCampground, catchAsync(async (req,res,next) => {
         const newCampground = new Campground (req.body.campground)
         await newCampground.save()
         req.flash('success', 'New campground succesfully created')
         res.redirect(`/campgrounds/${newCampground._id}`)
 }))
+
 
 router.get('/:id', catchAsync(async (req,res) => {
     const id = req.params.id
@@ -44,7 +45,7 @@ router.get('/:id', catchAsync(async (req,res) => {
     res.render('campgrounds/show',{campground})
 }))
 
-router.get('/:id/edit', catchAsync (async (req,res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync (async (req,res) => {
     const id = req.params.id
     const campground = await Campground.findById(id)
         if(!campground){
