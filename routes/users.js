@@ -6,13 +6,13 @@ const passport = require('passport')
 const users = require('../controllers/users')
 
 router.route('/register')
-    .get('/register', users.renderRegisterForm)
-    .post('/register', catchAsync(users.registerUser))
+    .get( users.renderRegisterForm)
+    .post(catchAsync(users.registerUser))
 
 
 router.route('/login')
-    .get('/login', users.renderLoginForm)
-    .get('/logout', users.logout)
+    .get(users.renderLoginForm)
+    .get(users.logout)
 
 
 router.post('/login', passport.authenticate('local', {failureFlash:true, failureRedirect:'/login', keepSessionInfo: true}), users.login)
