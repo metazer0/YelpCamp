@@ -25,3 +25,4 @@ router.route('/:id')
 router.get('/:id/edit',isLoggedIn, isAuthor, catchAsync (campgrounds.editCampgrounds))
 
 module.exports = router
+
