@@ -1,3 +1,8 @@
+if(process.env.NODE_ENV !== 'production'){
+    require('dotenv').config()
+}
+
+
 const express = require('express')
 const app = express()
 const path = require('path')
@@ -74,7 +79,6 @@ app.get('/fakeuser', async (req,res) => {
 app.use('/', userRoutes)
 app.use('/campgrounds', campgroundRoutes)
 app.use('/campgrounds/:id/reviews', reviewRoutes)
-
 
 
 app.get('/', (req,res) => {

@@ -11,9 +11,12 @@ module.exports.renderNewForm = (req,res) =>{
 }
 
 module.exports.createCampground = async (req,res,next) => {
+    
     const newCampground = new Campground (req.body.campground)
+    newCampground.images = req.files.map(f => ({url: f.path, filename: f.filename}))
     newCampground.author = req.user._id
     await newCampground.save()
+    console.log(newCampground)
     req.flash('success', 'New campground succesfully created')
     res.redirect(`/campgrounds/${newCampground._id}`)
 }
@@ -21,7 +24,6 @@ module.exports.createCampground = async (req,res,next) => {
 module.exports.showCampgrounds = async (req,res) => {
     const id = req.params.id
     const campground = await Campground.findById(id).populate({path:'reviews' , populate:{path:'author'}}).populate('author')
-    console.log(campground)
     if(!campground){
         req.flash('error', 'This campground is not available')
         return res.redirect('/campgrounds')
