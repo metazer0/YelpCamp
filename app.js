@@ -2,7 +2,6 @@ if(process.env.NODE_ENV !== 'production'){
     require('dotenv').config()
 }
 
-
 const express = require('express')
 const app = express()
 const path = require('path')
@@ -20,6 +19,10 @@ const LocalStrategy = require('passport-local')
 const User = require('./models/user')
 const userRoutes = require('./routes/users')
 const mongoSanitize = require('express-mongo-sanitize')
+const dbUrl = process.env.DB_URL
+const MongoDBStore = require("connect-mongo")
+
+//'mongodb://localhost:27017/yelp-camp'
 
 mongoose.connect('mongodb://localhost:27017/yelp-camp', {useNewUrlParser:true, useUnifiedTopology:true})
 
@@ -38,12 +41,26 @@ app.use(methodOverride('_method'))
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(mongoSanitize())
 
+const store = MongoDBStore.create({
+    mongoUrl:'mongodb://localhost:27017/yelp-camp',
+    touchAfter: 24*3600,
+    crypto: {
+        secret: 'secret'
+    }
+})
+
+store.on('error', function(){
+    console.log('session store error')
+})
+
 const sessionConfig = {
+    name: 'session',
     secret: 'secret',
     resave: false,
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
+        // secure: true,
         expires: Date.now() + 1000 * 60  * 60 * 24 * 7,
         maxAge: 1000 * 60  * 60 * 24 * 7 
     }
